@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Checkout — KC Enterprises</title>
+<meta name="description" content="Checkout — KC Enterprises.">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+  <nav class="nav container">
+    <a href="index.html" class="logo">KC <span>Enterprises</span></a>
+    <ul class="nav-links">
+      <li><a href="index.html" >Home</a></li>
+      <li><a href="shop.html" aria-current="page">Shop</a></li>
+      <li><a href="about.html" >About</a></li>
+      <li><a href="help-centre.html" >Help</a></li>
+      <li><a href="contact.html" >Contact</a></li>
+    </ul>
+    <div class="nav-actions">
+      <a href="account.html" class="bag-btn" aria-label="Account" title="Account">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      </a>
+      <a href="cart.html" class="bag-btn" aria-label="Bag" title="Bag">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+        <span class="bag-count">0</span>
+      </a>
+      <button class="nav-toggle" aria-expanded="false" aria-label="Toggle menu"><span></span><span></span><span></span></button>
+    </div>
+  </nav>
+</header>
+
+<main id="main">
+  <section class="page-header">
+    <div class="container">
+      <span class="eyebrow">Step 2 of 2</span>
+      <h1>Checkout</h1>
+    </div>
+  </section>
+
+  <div class="container checkout-layout">
+    <div class="checkout-main">
+
+      <section class="checkout-section">
+        <h2>1. Delivery Address</h2>
+        <form id="addressForm" class="checkout-form">
+          <div class="field"><label for="fullName">Full Name</label><input id="fullName" required></div>
+          <div class="field"><label for="phone">Phone Number</label><input id="phone" type="tel" required placeholder="+91 9XXXXXXXXX"></div>
+          <div class="field"><label for="addr1">Address</label><input id="addr1" required placeholder="House no., street, area"></div>
+          <div class="checkout-form-row">
+            <div class="field"><label for="city">City</label><input id="city" required value="Nashik"></div>
+            <div class="field"><label for="state">State</label><input id="state" required value="Maharashtra"></div>
+            <div class="field"><label for="pin">Pincode</label><input id="pin" required maxlength="6"></div>
+          </div>
+        </form>
+      </section>
+
+      <section class="checkout-section">
+        <h2>2. Coupon</h2>
+        <div class="coupon-box">
+          <input id="couponInput" placeholder="Enter coupon code (e.g. FIRST5)">
+          <button class="btn btn--ink btn--small" id="applyCouponBtn">Apply</button>
+        </div>
+        <p class="coupon-msg" id="couponMsg"></p>
+        <div class="coupon-suggestions">
+          <span class="tag" data-code="FIRST5">FIRST5 — 5% off first order</span>
+          <span class="tag" data-code="KC10">KC10 — 10% off above ₹3,000</span>
+          <span class="tag" data-code="WELCOME15">WELCOME15 — 15% off above ₹5,000</span>
+        </div>
+      </section>
+
+      <section class="checkout-section">
+        <h2>3. Payment Method</h2>
+        <div class="payment-options" id="paymentOptions">
+          <label class="payment-option">
+            <input type="radio" name="payment" value="upi" checked>
+            <span class="payment-option-label">UPI</span>
+            <span class="payment-option-sub">Pay via Google Pay, PhonePe, Paytm, or any UPI app</span>
+          </label>
+          <div class="payment-detail" data-for="upi">
+            <input placeholder="yourname@upi" id="upiId">
+          </div>
+
+          <label class="payment-option">
+            <input type="radio" name="payment" value="card">
+            <span class="payment-option-label">Credit / Debit Card</span>
+            <span class="payment-option-sub">Visa, Mastercard, RuPay, Amex</span>
+          </label>
+          <div class="payment-detail" data-for="card">
+            <input placeholder="Card number" maxlength="19">
+            <div class="checkout-form-row">
+              <input placeholder="MM/YY" maxlength="5">
+              <input placeholder="CVV" maxlength="3" type="password">
+            </div>
+          </div>
+
+          <label class="payment-option">
+            <input type="radio" name="payment" value="netbanking">
+            <span class="payment-option-label">Net Banking</span>
+            <span class="payment-option-sub">All major Indian banks supported</span>
+          </label>
+
+          <label class="payment-option">
+            <input type="radio" name="payment" value="cod">
+            <span class="payment-option-label">Cash on Delivery</span>
+            <span class="payment-option-sub">Pay in cash when your order arrives</span>
+          </label>
+        </div>
+      </section>
+
+    </div>
+
+    <aside class="order-summary">
+      <h2>Summary</h2>
+      <div id="checkoutSummaryRows"></div>
+      <button class="btn btn--ink btn--block" id="placeOrderBtn">Place Order</button>
+      <p class="checkout-note">This is a demo storefront — no real payment is processed. See README for connecting Razorpay / Stripe.</p>
+    </aside>
+  </div>
+
+  <div class="modal-overlay" id="orderSuccessModal">
+    <div class="modal-box">
+      <h3>Order Confirmed 🎉</h3>
+      <p id="orderSuccessText"></p>
+      <a href="account.html" class="btn btn--ink btn--block" style="margin-top:20px;">View Order History</a>
+      <a href="shop.html" class="hero-link" style="display:block; margin-top:14px; text-align:center;">Continue shopping →</a>
+    </div>
+  </div>
+</main>
+
+<script>
+(function () {
+  var totals = getCartTotals();
+  if (!totals.lines.length) {
+    document.querySelector('.checkout-layout').innerHTML = '<p class="empty-state is-visible">Your bag is empty. <a href="shop.html">Continue shopping →</a></p>';
+    return;
+  }
+
+  function renderSummary() {
+    var t = getCartTotals();
+    var rows = document.getElementById('checkoutSummaryRows');
+    rows.innerHTML =
+      '<div class="summary-row"><span>Sub Total</span><span>' + formatINR(t.subtotal) + '</span></div>' +
+      (t.coupon ? '<div class="summary-row summary-row--discount"><span>' + t.coupon.code + '</span><span>−' + formatINR(t.couponDiscount) + '</span></div>' : '') +
+      '<div class="summary-row"><span>Shipping</span><span>' + (t.shipping === 0 ? 'Free' : formatINR(t.shipping)) + '</span></div>' +
+      '<div class="summary-row summary-row--total"><span>You Pay</span><span>' + formatINR(t.total) + '</span></div>';
+  }
+  renderSummary();
+
+  document.querySelectorAll('.coupon-suggestions .tag').forEach(function (tag) {
+    tag.addEventListener('click', function () { document.getElementById('couponInput').value = tag.dataset.code; });
+  });
+
+  document.getElementById('applyCouponBtn').addEventListener('click', function () {
+    var code = document.getElementById('couponInput').value.trim();
+    var result = applyCoupon(code);
+    var msg = document.getElementById('couponMsg');
+    msg.textContent = result.message;
+    msg.style.color = result.ok ? '#2a7a2a' : '#c0392b';
+    renderSummary();
+  });
+
+  document.querySelectorAll('input[name="payment"]').forEach(function (radio) {
+    radio.addEventListener('change', function () {
+      document.querySelectorAll('.payment-detail').forEach(function (d) { d.classList.remove('is-visible'); });
+      var detail = document.querySelector('.payment-detail[data-for="' + radio.value + '"]');
+      if (detail) detail.classList.add('is-visible');
+    });
+  });
+  document.querySelector('.payment-detail[data-for="upi"]').classList.add('is-visible');
+
+  document.getElementById('placeOrderBtn').addEventListener('click', function () {
+    var form = document.getElementById('addressForm');
+    if (!form.checkValidity()) { form.reportValidity(); return; }
+    var method = document.querySelector('input[name="payment"]:checked').value;
+    var order = placeOrder(method);
+    if (!order) return;
+    document.getElementById('orderSuccessText').textContent =
+      'Order ' + order.id + ' placed successfully. Total paid: ' + formatINR(order.total) + ' via ' + method.toUpperCase() + '.';
+    document.getElementById('orderSuccessModal').classList.add('is-open');
+  });
+})();
+</script>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a href="index.html" class="logo">KC <span>Enterprises</span></a>
+        <p>KC Enterprises makes shoes, clothing and sportswear for people who don't sit still. Demo storefront — swap this copy for your own.</p>
+        <div class="footer-social">
+          <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1"/></svg></a>
+          <a href="#" aria-label="Twitter"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53A4.48 4.48 0 0 0 22.4.36a9.09 9.09 0 0 1-2.88 1.1A4.52 4.52 0 0 0 16.11 0c-2.5 0-4.52 2.02-4.52 4.52 0 .35.04.69.11 1.02C7.69 5.4 4.07 3.48 1.64.9a4.48 4.48 0 0 0 1.4 6.04A4.48 4.48 0 0 1 1 6.13v.06c0 2.2 1.56 4.03 3.64 4.46-.38.1-.78.16-1.2.16-.29 0-.57-.03-.85-.08.58 1.8 2.26 3.12 4.25 3.15A9.06 9.06 0 0 1 1 17.54 9.06 9.06 0 0 1 0 17.5"/></svg></a>
+          <a href="#" aria-label="WhatsApp"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg></a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Shop</h4>
+        <ul>
+          <li><a href="shop.html?gender=men&cat=shoes">Men's Shoes</a></li>
+          <li><a href="shop.html?gender=men&cat=clothing">Men's Clothing</a></li>
+          <li><a href="shop.html?gender=women&cat=shoes">Women's Shoes</a></li>
+          <li><a href="shop.html?gender=women&cat=clothing">Women's Clothing</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Help</h4>
+        <ul>
+          <li><a href="help-centre.html">Help Centre</a></li>
+          <li><a href="help-centre.html#returns">Returns &amp; Replacement</a></li>
+          <li><a href="help-centre.html#shipping">Shipping &amp; Dispatch</a></li>
+          <li><a href="contact.html">Contact Us</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Company</h4>
+        <ul>
+          <li><a href="about.html">About</a></li>
+          <li><a href="account.html">My Account</a></li>
+          <li><a href="cart.html">Bag</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-watermark">KC</div>
+    <div class="footer-bottom container">
+      <span>© 2026 KC Enterprises. All rights reserved.</span>
+      <span>Prices shown in INR. Demo storefront.</span>
+    </div>
+  </div>
+</footer>
+<script src="assets/products.js"></script>
+<script src="assets/cart.js"></script>
+<script src="assets/main.js"></script>
+</body>
+</html>

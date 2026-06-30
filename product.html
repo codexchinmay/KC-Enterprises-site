@@ -1,0 +1,251 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Product — KC Enterprises</title>
+<meta name="description" content="Product details — KC Enterprises.">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+  <nav class="nav container">
+    <a href="index.html" class="logo">KC <span>Enterprises</span></a>
+    <ul class="nav-links">
+      <li><a href="index.html" >Home</a></li>
+      <li><a href="shop.html" aria-current="page">Shop</a></li>
+      <li><a href="about.html" >About</a></li>
+      <li><a href="help-centre.html" >Help</a></li>
+      <li><a href="contact.html" >Contact</a></li>
+    </ul>
+    <div class="nav-actions">
+      <a href="account.html" class="bag-btn" aria-label="Account" title="Account">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      </a>
+      <a href="cart.html" class="bag-btn" aria-label="Bag" title="Bag">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+        <span class="bag-count">0</span>
+      </a>
+      <button class="nav-toggle" aria-expanded="false" aria-label="Toggle menu"><span></span><span></span><span></span></button>
+    </div>
+  </nav>
+</header>
+
+<main id="main">
+  <div class="container pdp" id="pdpRoot">
+    <p class="pdp-loading">Loading product…</p>
+  </div>
+</main>
+
+<template id="pdpTemplate">
+  <a href="shop.html" class="pdp-back">← Back to shop</a>
+  <div class="pdp-grid">
+    <div class="pdp-gallery">
+      <div class="pdp-figure">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1"><circle cx="12" cy="12" r="9"/><path d="M8 12h8M12 8v8"/></svg>
+      </div>
+      <div class="pdp-thumbs">
+        <div class="pdp-thumb is-active"></div>
+        <div class="pdp-thumb"></div>
+        <div class="pdp-thumb"></div>
+        <div class="pdp-thumb"></div>
+      </div>
+    </div>
+    <div class="pdp-info">
+      <span class="pdp-badge" data-bind="badge"></span>
+      <h1 data-bind="name"></h1>
+      <p class="pdp-sub" data-bind="meta"></p>
+      <div class="pdp-price">
+        <span class="pdp-price-now" data-bind="price"></span>
+        <span class="pdp-price-was" data-bind="mrp"></span>
+        <span class="pdp-price-tax">Inclusive of all taxes</span>
+      </div>
+
+      <div class="pdp-size-head">
+        <span>Select Size</span>
+        <button class="pdp-sizeguide" id="sizeGuideBtn">Size Guide</button>
+      </div>
+      <div class="pdp-sizes" id="sizeOptions"></div>
+      <p class="pdp-size-error" id="sizeError">Please select a size.</p>
+
+      <div class="pdp-actions">
+        <button class="btn btn--ink btn--block" id="addToBagBtn">Add to Bag</button>
+        <button class="btn btn--outline btn--block" id="favBtn">Favourite ♡</button>
+      </div>
+      <a href="#" id="waNotifyBtn" class="pdp-wa-link">📲 Notify me on WhatsApp about this product</a>
+
+      <p class="pdp-desc" data-bind="description"></p>
+      <ul class="pdp-bullets" data-bind="bullets"></ul>
+
+      <details class="pdp-accordion" open>
+        <summary>Product Details</summary>
+        <p>SKU: <span data-bind="sku"></span> &nbsp;|&nbsp; Colour: <span data-bind="colour"></span></p>
+      </details>
+      <details class="pdp-accordion">
+        <summary>Shipping &amp; Returns</summary>
+        <p>Free shipping on orders over ₹2,999. Easy 14-day returns — see our <a href="help-centre.html#returns">Returns &amp; Replacement</a> policy.</p>
+      </details>
+      <details class="pdp-accordion">
+        <summary>Reviews</summary>
+        <p>★★★★☆ 4.3 out of 5 — based on 128 ratings (demo placeholder data).</p>
+      </details>
+    </div>
+  </div>
+
+  <section class="pdp-related">
+    <h2>You might also like</h2>
+    <div class="product-grid" id="relatedGrid"></div>
+  </section>
+</template>
+
+<div class="modal-overlay" id="sizeGuideModal">
+  <div class="modal-box">
+    <button class="modal-close" id="closeSizeGuide">×</button>
+    <h3 id="sizeGuideTitle">Size Guide</h3>
+    <table class="size-table" id="sizeGuideTable"></table>
+  </div>
+</div>
+
+<script>
+(function () {
+  var params = new URLSearchParams(window.location.search);
+  var id = params.get('id') || (PRODUCTS[0] && PRODUCTS[0].id);
+  var product = getProductById(id);
+  var root = document.getElementById('pdpRoot');
+
+  if (!product) {
+    root.innerHTML = '<p class="pdp-loading">Product not found. <a href="shop.html">Back to shop</a></p>';
+    return;
+  }
+
+  var tpl = document.getElementById('pdpTemplate').content.cloneNode(true);
+  root.innerHTML = '';
+  root.appendChild(tpl);
+
+  root.querySelector('[data-bind="badge"]').textContent = product.isNew ? 'Just In' : product.category === 'shoes' ? "Men's / Women's Shoes" : 'Clothing';
+  root.querySelector('[data-bind="name"]').textContent = product.name;
+  root.querySelector('[data-bind="meta"]').textContent = (product.gender === 'men' ? "Men's " : "Women's ") + (product.category === 'shoes' ? 'Shoes' : 'Clothing');
+  root.querySelector('[data-bind="price"]').textContent = formatINR(product.price);
+  var mrpEl = root.querySelector('[data-bind="mrp"]');
+  if (product.mrp && product.mrp > product.price) { mrpEl.textContent = formatINR(product.mrp); } else { mrpEl.remove(); }
+  root.querySelector('[data-bind="description"]').textContent = product.description;
+  root.querySelector('[data-bind="sku"]').textContent = product.sku;
+  root.querySelector('[data-bind="colour"]').textContent = product.colour;
+
+  var bulletsEl = root.querySelector('[data-bind="bullets"]');
+  bulletsEl.innerHTML = product.bullets.map(function (b) { return '<li>' + b + '</li>'; }).join('');
+
+  var sizeWrap = root.querySelector('#sizeOptions');
+  var selectedSize = null;
+  sizeWrap.innerHTML = product.sizes.map(function (s) {
+    return '<button class="pdp-size-btn" data-size="' + s + '">' + s + '</button>';
+  }).join('');
+  sizeWrap.querySelectorAll('.pdp-size-btn').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      sizeWrap.querySelectorAll('.pdp-size-btn').forEach(function (b) { b.classList.remove('is-selected'); });
+      btn.classList.add('is-selected');
+      selectedSize = btn.dataset.size;
+      root.querySelector('#sizeError').classList.remove('is-visible');
+    });
+  });
+
+  root.querySelector('#addToBagBtn').addEventListener('click', function () {
+    if (!selectedSize) { root.querySelector('#sizeError').classList.add('is-visible'); return; }
+    addToCart(product.id, selectedSize, 1);
+    var btn = this;
+    var original = btn.textContent;
+    btn.textContent = 'Added to Bag ✓';
+    setTimeout(function () { btn.textContent = original; }, 1500);
+  });
+
+  root.querySelector('#favBtn').addEventListener('click', function () {
+    this.textContent = this.textContent.indexOf('♥') > -1 ? 'Favourite ♡' : 'Favourited ♥';
+  });
+
+  var waBtn = root.querySelector('#waNotifyBtn');
+  waBtn.addEventListener('click', function (e) {
+    e.preventDefault();
+    sendWhatsAppAlert('viewed', product);
+    window.open(buildWaLink('Hi KC Enterprises, notify me about updates on ' + product.name + ' (' + product.sku + ').'), '_blank');
+  });
+  sendWhatsAppAlert('viewed', product);
+
+  var sgBtn = root.querySelector('#sizeGuideBtn');
+  var modal = document.getElementById('sizeGuideModal');
+  var chart = SIZE_CHARTS[product.category];
+  sgBtn.addEventListener('click', function () {
+    document.getElementById('sizeGuideTitle').textContent = chart.title;
+    var table = document.getElementById('sizeGuideTable');
+    table.innerHTML = '<tr>' + chart.headers.map(function (h) { return '<th>' + h + '</th>'; }).join('') + '</tr>' +
+      chart.rows.map(function (r) { return '<tr>' + r.map(function (c) { return '<td>' + c + '</td>'; }).join('') + '</tr>'; }).join('');
+    modal.classList.add('is-open');
+  });
+  document.getElementById('closeSizeGuide').addEventListener('click', function () { modal.classList.remove('is-open'); });
+  modal.addEventListener('click', function (e) { if (e.target === modal) modal.classList.remove('is-open'); });
+
+  var related = PRODUCTS.filter(function (p) { return p.id !== product.id && p.category === product.category && p.gender === product.gender; }).slice(0, 3);
+  if (!related.length) related = PRODUCTS.filter(function (p) { return p.id !== product.id; }).slice(0, 3);
+  document.getElementById('relatedGrid').innerHTML = related.map(function (p) {
+    var priceHTML = p.mrp && p.mrp > p.price
+      ? formatINR(p.price) + ' <s style="color:var(--ash); font-weight:400;">' + formatINR(p.mrp) + '</s>'
+      : formatINR(p.price);
+    return '<article class="product-card"><a href="product.html?id=' + p.id + '" class="product-figure"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5"><circle cx="12" cy="12" r="9"/><path d="M8 12h8M12 8v8"/></svg></a>' +
+      '<div class="product-body"><span class="product-sku">' + p.sku + '</span><a href="product.html?id=' + p.id + '" class="product-name">' + p.name + '</a>' +
+      '<div class="product-meta"><span class="product-price">' + priceHTML + '</span></div></div></article>';
+  }).join('');
+})();
+</script>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a href="index.html" class="logo">KC <span>Enterprises</span></a>
+        <p>KC Enterprises makes shoes, clothing and sportswear for people who don't sit still. Demo storefront — swap this copy for your own.</p>
+        <div class="footer-social">
+          <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1"/></svg></a>
+          <a href="#" aria-label="Twitter"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53A4.48 4.48 0 0 0 22.4.36a9.09 9.09 0 0 1-2.88 1.1A4.52 4.52 0 0 0 16.11 0c-2.5 0-4.52 2.02-4.52 4.52 0 .35.04.69.11 1.02C7.69 5.4 4.07 3.48 1.64.9a4.48 4.48 0 0 0 1.4 6.04A4.48 4.48 0 0 1 1 6.13v.06c0 2.2 1.56 4.03 3.64 4.46-.38.1-.78.16-1.2.16-.29 0-.57-.03-.85-.08.58 1.8 2.26 3.12 4.25 3.15A9.06 9.06 0 0 1 1 17.54 9.06 9.06 0 0 1 0 17.5"/></svg></a>
+          <a href="#" aria-label="WhatsApp"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg></a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Shop</h4>
+        <ul>
+          <li><a href="shop.html?gender=men&cat=shoes">Men's Shoes</a></li>
+          <li><a href="shop.html?gender=men&cat=clothing">Men's Clothing</a></li>
+          <li><a href="shop.html?gender=women&cat=shoes">Women's Shoes</a></li>
+          <li><a href="shop.html?gender=women&cat=clothing">Women's Clothing</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Help</h4>
+        <ul>
+          <li><a href="help-centre.html">Help Centre</a></li>
+          <li><a href="help-centre.html#returns">Returns &amp; Replacement</a></li>
+          <li><a href="help-centre.html#shipping">Shipping &amp; Dispatch</a></li>
+          <li><a href="contact.html">Contact Us</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Company</h4>
+        <ul>
+          <li><a href="about.html">About</a></li>
+          <li><a href="account.html">My Account</a></li>
+          <li><a href="cart.html">Bag</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-watermark">KC</div>
+    <div class="footer-bottom container">
+      <span>© 2026 KC Enterprises. All rights reserved.</span>
+      <span>Prices shown in INR. Demo storefront.</span>
+    </div>
+  </div>
+</footer>
+<script src="assets/products.js"></script>
+<script src="assets/cart.js"></script>
+<script src="assets/main.js"></script>
+</body>
+</html>
